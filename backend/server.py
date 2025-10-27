@@ -292,8 +292,8 @@ async def proxy_request(proxy_req: ProxyRequest):
 @api_router.get("/status")
 async def get_status():
     """Get current connection status"""
-    active_conns = await db.connections.find({"status": "active"}).to_list(10)
-    available_conns = await db.connections.find({"status": "available"}).to_list(100)
+    active_conns = await db.connections.find({"status": "active"}, {"_id": 0}).to_list(10)
+    available_conns = await db.connections.find({"status": "available"}, {"_id": 0}).to_list(100)
     
     return {
         "active_connections": len(active_conns),
