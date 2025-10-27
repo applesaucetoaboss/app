@@ -233,8 +233,8 @@ async def auto_connect():
 @api_router.post("/proxy")
 async def proxy_request(proxy_req: ProxyRequest):
     """Route web requests through active connection"""
-    # Get active connection
-    active_conn = await db.connections.find_one({"status": "active"})
+    # Get active connection (exclude _id)
+    active_conn = await db.connections.find_one({"status": "active"}, {"_id": 0})
     
     if not active_conn:
         # Try to auto-connect
