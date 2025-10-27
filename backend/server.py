@@ -185,13 +185,16 @@ async def test_connection(connection_id: str):
 @api_router.post("/connect")
 async def auto_connect():
     """Automatically connect to the best available source"""
-    # Get all available connections
-    connections = await db.connections.find({"status": {"$in": ["available", "active"]}}).to_list(100)
+    # Get all available connections (exclude _id)
+    connections = await db.connections.find(
+        {"status": {"$in": ["available", "active"]}}, 
+        {"_id": 0}
+    ).to_list(100)
     
     if not connections:
         # Trigger discovery if none found
         await discover_connections()
-        connections = await db.connections.find({"status": "available"}).to_list(100)
+        connections = await db.connections.find({"status": "available"}, {"_id": 0}).to_list(100)
     
     # Test connections in parallel
     test_tasks = []
