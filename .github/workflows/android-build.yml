@@ -18,7 +18,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
-          cache: gradle
+          cache: 'maven'
       
       - name: Set up Python
         uses: actions/setup-python@v4
