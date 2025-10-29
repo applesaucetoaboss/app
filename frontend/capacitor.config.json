@@ -1,0 +1,14 @@
+{
+  "appId": "com.internetaccessmiracle.app",
+  "appName": "Internet Access Miracle",
+  "webDir": "build",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}

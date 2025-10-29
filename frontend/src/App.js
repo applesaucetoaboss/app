@@ -98,10 +98,17 @@ function App() {
         url: browserUrl,
         method: 'GET'
       });
-
-      if (response.data.body) {
-        const content = atob(response.data.body);
-        setBrowserContent(content);
+      
+      // Decode base64 content
+      const content = atob(response.data.content);
+      setBrowserContent(content);
+      setShowBrowser(true);
+      setStatus('browsing');
+    } catch (error) {
+      console.error('Failed to load webpage:', error);
+      setStatus('error');
+      setBrowserContent(`<div class="error">Failed to load: ${error.message}</div>`);
+      setShowBrowser(true);
         setShowBrowser(true);
         setStatus('connected');
       }

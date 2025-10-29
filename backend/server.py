@@ -79,6 +79,18 @@ DOH_PROVIDERS = [
 async def root():
     return {"message": "Internet Access Miracle - Backend Online", "status": "ready"}
 
+@api_router.get("/status")
+async def get_status():
+    """Get current connection status and statistics"""
+    active_connections = await db.connections.find({"status": "active"}).to_list(100)
+    available_connections = await db.connections.find({"status": "available"}).to_list(100)
+    
+    return {
+        "active_connections": len(active_connections),
+        "available_connections": len(available_connections),
+        "connections": active_connections
+    }
+
 @api_router.get("/discover", response_model=List[ConnectionSource])
 async def discover_connections():
     """Discover all available internet connection sources"""
@@ -198,6 +210,51 @@ async def auto_connect():
     
     # Test connections in parallel
     test_tasks = []
+    
+@api_router.post("/proxy")
+async def proxy_request(request: ProxyRequest):
+    """Proxy a web request through the active connection"""
+    # Get active connection
+    active_connections = await db.connections.find({"status": "active"}).to_list(1)
+    
+    if not active_connections:
+        # Try to auto-connect if no active connection
+        connect_result = await auto_connect()
+        if not connect_result.get("success"):
+            raise HTTPException(status_code=503, detail="No active connection available")
+        active_connections = await db.connections.find({"status": "active"}).to_list(1)
+    
+    # Use the first active connection
+    connection = active_connections[0]
+    
+    try:
+        async with aiohttp.ClientSession() as session:
+            headers = request.headers or {}
+            method = request.method.lower()
+            request_kwargs = {
+                "headers": headers,
+                "ssl": False  # Allow self-signed certs
+            }
+            
+            if request.body:
+                request_kwargs["data"] = request.body
+                
+            # Make the request through the proxy if applicable
+            if connection["type"] == "proxy":
+                proxy = f"http://{connection['endpoint']}"
+                request_kwargs["proxy"] = proxy
+            
+            async with getattr(session, method)(request.url, **request_kwargs) as response:
+                content = await response.read()
+                return JSONResponse(
+                    content={
+                        "status": response.status,
+                        "headers": dict(response.headers),
+                        "content": base64.b64encode(content).decode('utf-8')
+                    }
+                )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Proxy request failed: {str(e)}")
     for conn in connections[:10]:  # Test top 10
         test_tasks.append(test_connection_direct(conn))
     

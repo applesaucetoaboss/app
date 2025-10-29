@@ -48,6 +48,21 @@ dump.rdb
 
 # Python
 __pycache__/
+
+# Android
+frontend/android/app/build/
+frontend/android/.gradle/
+frontend/android/captures/
+frontend/android/local.properties
+frontend/android/.idea/
+frontend/android/*.iml
+frontend/android/.externalNativeBuild
+frontend/android/.cxx/
+frontend/android/gradlew
+frontend/android/gradlew.bat
+frontend/android/gradle/wrapper/
+*.apk
+*.aab
 *pyc*
 venv/
 .venv/
@@ -77,4 +92,4 @@ agenthub/agents/youtube/db
 .cache/
 
 # Mobile development
-android-sdk/ 
+android-sdk/
