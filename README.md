@@ -19,6 +19,33 @@ This project can be built into an Android app using GitHub Actions:
 
 For detailed local setup instructions, see [Android Setup](android-setup.md).
 
+## Privacy Policy (for Google Play)
+
+You need a public URL for your Privacy Policy. Two easy options:
+
+- Backend route: run/deploy the FastAPI server and use `https://your-server-domain/privacy`.
+- GitHub Pages: use the included `docs/privacy.html`.
+
+### Enable GitHub Pages
+1. Push the repo to GitHub (e.g., `https://github.com/applesaucetoaboss/app`).
+2. In GitHub: Settings → Pages → Source: "Deploy from a branch".
+3. Select Branch: `main`, Folder: `/docs`, then Save.
+4. Your policy will be available at `https://<your-username>.github.io/<repo-name>/privacy.html`.
+
+For the provided repo, the link will be:
+- `https://applesaucetoaboss.github.io/app/privacy.html`
+
+Add this URL in Play Console → App content → Privacy policy.
+
+## AdMob Setup
+
+Set these env vars in `frontend/.env`:
+- `REACT_APP_ADMOB_APP_ID=ca-app-pub-xxxxxxxxxxxxxxxx~yyyyyyyyyy`
+- `REACT_APP_ADMOB_REWARDED_UNIT_ID=ca-app-pub-xxxxxxxxxxxxxxxx/zzzzzzzzzz`
+- Optional: `REACT_APP_ADMOB_DEBUG_AUTO_UNLOCK=true` to bypass the gate during dev.
+
+See `frontend/README.admob.md` for details.
+
 ## Development
 
 ### Backend

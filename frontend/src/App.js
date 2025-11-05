@@ -2,8 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import '@/App.css';
 import axios from 'axios';
 import { Wifi, Zap, Globe, Lock, Activity, Satellite, Radio, Network } from 'lucide-react';
+import { ensureRewardGate } from '@/lib/adGate';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
 const API = `${BACKEND_URL}/api`;
 
 function App() {
@@ -91,32 +92,33 @@ function App() {
       alert('Please connect to internet first!');
       return;
     }
-
     setStatus('loading');
     try {
       const response = await axios.post(`${API}/proxy`, {
         url: browserUrl,
-        method: 'GET'
+        method: 'GET',
       });
-      
-      // Decode base64 content
-      const content = atob(response.data.content);
-      setBrowserContent(content);
+      const base64 = response?.data?.content || response?.data?.body || '';
+      const decoded = base64 ? atob(base64) : '<div>Empty response</div>';
+      setBrowserContent(decoded);
       setShowBrowser(true);
       setStatus('browsing');
     } catch (error) {
       console.error('Failed to load webpage:', error);
-      setStatus('error');
-      setBrowserContent(`<div class="error">Failed to load: ${error.message}</div>`);
+      setBrowserContent(`<div class="p-4 text-red-700">Failed to load: ${error.message}</div>`);
       setShowBrowser(true);
-        setShowBrowser(true);
-        setStatus('connected');
-      }
-    } catch (error) {
-      console.error('Failed to load webpage:', error);
-      alert('Failed to load webpage. Trying to reconnect...');
-      await connectToInternet();
+      setStatus('error');
     }
+  };
+
+  const handleConnectClicked = async () => {
+    // Gate the connect action behind a rewarded ad
+    const unlocked = await ensureRewardGate();
+    if (!unlocked) {
+      setStatus('failed');
+      return;
+    }
+    await connectToInternet();
   };
 
   const getStatusColor = () => {
@@ -152,7 +154,7 @@ function App() {
             <div className="flex items-center gap-3">
               <Zap className={`w-8 h-8 ${getStatusColor()} transition-colors duration-300`} />
               <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Internet Miracle
+                Manifested Connection
               </h1>
             </div>
             <div className="flex items-center gap-6">
@@ -182,7 +184,7 @@ function App() {
             </p>
 
             <button
-              onClick={connectToInternet}
+              onClick={handleConnectClicked}
               disabled={connecting}
               data-testid="connect-button"
               className={`
@@ -294,8 +296,13 @@ function App() {
               </div>
 
               {showBrowser && (
-                <div className="bg-white rounded-lg p-4 text-black max-h-96 overflow-auto" data-testid="browser-content">
-                  <div dangerouslySetInnerHTML={{ __html: browserContent }} />
+                <div className="bg-white rounded-lg p-0 text-black max-h-96 overflow-hidden" data-testid="browser-content">
+                  <iframe
+                    title="preview"
+                    sandbox="allow-same-origin allow-forms allow-scripts"
+                    srcDoc={browserContent}
+                    className="w-full h-96 rounded-lg bg-white"
+                  />
                 </div>
               )}
             </div>
