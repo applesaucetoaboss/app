@@ -2,8 +2,6 @@
 
 [![Android Build](https://github.com/applesaucetoaboss/app/actions/workflows/android-build.yml/badge.svg?branch=main)](https://github.com/applesaucetoaboss/app/actions/workflows/android-build.yml)
 
-[![Android Build](https://github.com/applesaucetoaboss/app/actions/workflows/android-build.yml/badge.svg?branch=main)](https://github.com/applesaucetoaboss/app/actions/workflows/android-build.yml)
-
 An application that helps users without internet access to establish connections through various methods.
 
 ## Overview
