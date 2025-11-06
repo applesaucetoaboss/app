@@ -67,12 +67,14 @@ jobs:
           npx cap sync android
 
       - name: Add AdMob App ID to AndroidManifest
-        env:
-          ADMOB_APP_ID: ca-app-pub-7429469900417746~7081746845
         run: |
+          ADMOB_APP_ID="${{ secrets.ADMOB_APP_ID }}"
+          if [ -z "$ADMOB_APP_ID" ]; then ADMOB_APP_ID="ca-app-pub-3940256099942544~3347511713"; fi
           MANIFEST="frontend/android/app/src/main/AndroidManifest.xml"
           if ! grep -q "com.google.android.gms.ads.APPLICATION_ID" "$MANIFEST"; then
             sed -i '/<application/a \\    <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="'"$ADMOB_APP_ID"'" \/>' "$MANIFEST"
+          else
+            sed -i 's|android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"[^\"]*\"|android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"'"$ADMOB_APP_ID"'\"|g' "$MANIFEST"
           fi
           
       - name: Copy backend to Android assets
@@ -84,6 +86,18 @@ jobs:
         run: |
           cd frontend
           npx cap sync android
+
+      - name: Force Android SDK versions to 34
+        run: |
+          FILE="frontend/android/variables.gradle"
+          if [ -f "$FILE" ]; then
+            sed -i 's/compileSdkVersion = [0-9]\+/compileSdkVersion = 34/' "$FILE"
+            sed -i 's/targetSdkVersion = [0-9]\+/targetSdkVersion = 34/' "$FILE"
+          else
+            FILE="frontend/android/app/build.gradle"
+            sed -i 's/compileSdkVersion [0-9]\+/compileSdkVersion 34/' "$FILE" || true
+            sed -i 's/targetSdkVersion [0-9]\+/targetSdkVersion 34/' "$FILE" || true
+          fi
           
       - name: Build Android APK
         run: |

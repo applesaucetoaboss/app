@@ -1,5 +1,9 @@
 # Internet Access Miracle
 
+[![Android Build](https://github.com/applesaucetoaboss/app/actions/workflows/android-build.yml/badge.svg?branch=main)](https://github.com/applesaucetoaboss/app/actions/workflows/android-build.yml)
+
+[![Android Build](https://github.com/applesaucetoaboss/app/actions/workflows/android-build.yml/badge.svg?branch=main)](https://github.com/applesaucetoaboss/app/actions/workflows/android-build.yml)
+
 An application that helps users without internet access to establish connections through various methods.
 
 ## Overview
@@ -18,6 +22,8 @@ This project can be built into an Android app using GitHub Actions:
 3. Users can download and install the APK directly on their Android devices
 
 For detailed local setup instructions, see [Android Setup](android-setup.md).
+
+View CI runs: https://github.com/applesaucetoaboss/app/actions
 
 ## Privacy Policy (for Google Play)
 
@@ -45,6 +51,15 @@ Set these env vars in `frontend/.env`:
 - Optional: `REACT_APP_ADMOB_DEBUG_AUTO_UNLOCK=true` to bypass the gate during dev.
 
 See `frontend/README.admob.md` for details.
+
+### CI AdMob App ID Secret
+The CI injects the AdMob App ID into the Android manifest during the build.
+
+- In GitHub: Settings → Secrets and variables → Actions → New repository secret
+- Name: `ADMOB_APP_ID`
+- Value: your App ID (format `ca-app-pub-xxxxxxxxxxxxxxxx~yyyyyyyyyy`)
+
+If the secret is missing, the CI uses Google’s sample App ID for testing only.
 
 ## Development
 
