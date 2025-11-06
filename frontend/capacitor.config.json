@@ -1,6 +1,6 @@
 {
-  "appId": "com.boostedsupport.app",
-  "appName": "Boosted Support",
+  "appId": "com.boostcapacitor.app",
+  "appName": "Boost Capacitor",
   "webDir": "build",
   "bundledWebRuntime": false,
   "server": {
