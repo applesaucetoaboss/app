@@ -1,6 +1,6 @@
 {
-  "appId": "com.internetaccessmiracle.app",
-  "appName": "Internet Access Miracle",
+  "appId": "com.boostedsupport.app",
+  "appName": "Boosted Support",
   "webDir": "build",
   "bundledWebRuntime": false,
   "server": {
